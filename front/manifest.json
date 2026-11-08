@@ -1,10 +1,22 @@
 {
-  "name": "FitTrack - تتبع صحتك",
+  "name": "FitTrack",
   "short_name": "FitTrack",
-  "description": "تطبيق لتتبع التغذية والصحة والنشاط اليومي",
-  "start_url": "/index.html",
+  "description": "تطبيق تتبع الصحة واللياقة البدنية",
+  "start_url": "/FitTrack/front/index.html",
   "display": "standalone",
-  "background_color": "#f5f7fc",
-  "theme_color": "#3978ee",
-  "orientation": "portrait"
+  "background_color": "#ffffff",
+  "theme_color": "#4CAF50",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%234CAF50' width='192' height='192' rx='30'/%3E%3Ctext x='96' y='120' font-size='80' text-anchor='middle' fill='white' font-family='Arial'%3EFT%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%234CAF50' width='512' height='512' rx='80'/%3E%3Ctext x='256' y='320' font-size='200' text-anchor='middle' fill='white' font-family='Arial'%3EFT%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
 }
