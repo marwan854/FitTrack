@@ -529,12 +529,13 @@ function resetData(){
 }
 document.getElementById("foodResults").innerHTML='<p class="empty">اكتب اسم أكلة للبحث.</p>';
 </script>
+
 <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('Service Worker registered'))
-        .catch(err => console.log('Service Worker failed', err));
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for(let registration of registrations) {
+        registration.unregister();
+      }
     });
   }
 </script>
