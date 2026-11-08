@@ -70,6 +70,23 @@ input:focus, select:focus { border-color: var(--primary); }
 .login-box h2 { color: var(--primary); margin-bottom: 10px; }
 .login-box .message { color: var(--red); margin-top: 10px; min-height: 20px; font-size: 13px; }
 @media(max-width:750px) { .grid { grid-template-columns: repeat(2, minmax(0,1fr)); } .macro-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+  .custom-modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); display: flex; justify-content: center;
+  align-items: center; z-index: 99999;
+}
+.custom-modal {
+  background: var(--card); color: var(--text);
+  padding: 25px; border-radius: 15px; min-width: 280px;
+  text-align: center; box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+.custom-modal p { margin: 0 0 20px; font-size: 15px; }
+.custom-modal button {
+  background: var(--primary); color: white; border: 0;
+  padding: 9px 30px; border-radius: 9px; font-weight: bold;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -538,6 +555,16 @@ document.getElementById("foodResults").innerHTML='<p class="empty">اكتب اس
       }
     });
   }
+  function showModal(msg) {
+  const overlay = document.createElement('div');
+  overlay.className = 'custom-modal-overlay';
+  overlay.innerHTML = `
+    <div class="custom-modal">
+      <p>${msg}</p>
+      <button onclick="this.closest('.custom-modal-overlay').remove()">حسنًا</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
 </script>
 </body>
 </html>
