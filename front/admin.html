@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>FitTrack - لوحة المدير</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Tahoma, Arial; background: #f5f7fc; padding: 20px; }
+h1 { color: #3978ee; margin-bottom: 20px; }
+.login-box { max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 18px rgba(0,0,0,0.1); }
+.login-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+.btn { width: 100%; padding: 12px; background: #3978ee; color: white; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: bold; }
+.btn:hover { background: #245ac2; }
+.dashboard { max-width: 1200px; margin: auto; }
+.user-card { background: white; border-radius: 12px; padding: 20px; margin: 15px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.user-card h3 { color: #3978ee; margin-bottom: 10px; }
+.user-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 15px 0; }
+.info-box { background: #f5f7fc; padding: 12px; border-radius: 8px; }
+.info-box b { color: #3978ee; display: block; margin-bottom: 5px; font-size: 12px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 15px 0; }
+.stat-box { background: #3978ee; color: white; padding: 15px; border-radius: 10px; text-align: center; }
+.stat-box b { font-size: 24px; display: block; }
+.hidden { display: none; }
+.loading { text-align: center; padding: 20px; color: #8290a5; }
+</style>
+</head>
+<body>
+
+<div id="loginScreen" class="login-box">
+  <h1>🔐 دخول المدير</h1>
+  <input type="email" id="adminEmail" placeholder="إيميل المدير">
+  <input type="password" id="adminPass" placeholder="كلمة المرور">
+  <button class="btn" onclick="adminLogin()">دخول</button>
+  <p id="loginMsg" style="color:red; margin-top:10px;"></p>
+</div>
+
+<div id="dashboard" class="dashboard hidden">
+  <h1>📊 لوحة تحكم المدير - FitTrack</h1>
+  <div class="stats">
+    <div class="stat-box"><b id="totalUsers">0</b>المستخدمين</div>
+  </div>
+  <div id="usersList"></div>
+  <button class="btn" style="max-width:200px; margin-top:20px;" onclick="logout()">خروج</button>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBKjhjOWoC-xK1xeFYl1E5cEUaWa7puktuo",
+  authDomain: "fittrack-41887.firebaseapp.com",
+  projectId: "fittrack-41887",
+  storageBucket: "fittrack-41887.firebasestorage.app",
+  messagingSenderId: "951138572327",
+  appId: "1:951138572327:web:f6414fa2acc04903219602"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const ADMIN_EMAIL = "admin@fittrack.com";
+const ADMIN_PASS = "admin123";
+
+function adminLogin() {
+  const email = document.getElementById('adminEmail').value;
+  const pass = document.getElementById('adminPass').value;
+  const msg = document.getElementById('loginMsg');
+  
+  if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    loadAllUsers();
+  } else {
+    msg.textContent = 'بيانات غير صحيحة';
+  }
+}
+
+function logout() {
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+async function loadAllUsers() {
+  const usersList = document.getElementById('usersList');
+  usersList.innerHTML = '<div class="loading">جاري تحميل البيانات...</div>';
+  
+  try {
+    const snapshot = await db.collection('users').get();
+    const users = [];
+    
+    snapshot.forEach(doc => {
+      users.push({ id: doc.id, ...doc.data() });
+    });
+    
+    document.getElementById('totalUsers').textContent = users.length;
+    
+    if (users.length === 0) {
+      usersList.innerHTML = '<div class="loading">لا يوجد مستخدمين</div>';
+      return;
+    }
+    
+    let html = '';
+    users.forEach(user => {
+      html += `
+        <div class="user-card">
+          <h3>👤 ${user.name || 'مستخدم'}</h3>
+          <div class="user-info">
+            <div class="info-box"><b>الإيميل</b>${user.email || '--'}</div>
+            <div class="info-box"><b>التليفون</b>${user.phone || '--'}</div>
+            <div class="info-box"><b>تاريخ التسجيل</b>${user.createdAt ? new Date(user.createdAt.toDate ? user.createdAt.toDate() : user.createdAt).toLocaleDateString('ar-EG') : '--'}</div>
+          </div>
+        </div>
+      `;
+    });
+    
+    usersList.innerHTML = html;
+  } catch (error) {
+    usersList.innerHTML = '<div class="loading" style="color:red;">خطأ: ' + error.message + '</div>';
+  }
+}
+</script>
+
+</body>
+</html>

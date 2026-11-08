@@ -1,0 +1,10 @@
+{
+  "name": "FitTrack - تتبع صحتك",
+  "short_name": "FitTrack",
+  "description": "تطبيق لتتبع التغذية والصحة والنشاط اليومي",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f5f7fc",
+  "theme_color": "#3978ee",
+  "orientation": "portrait"
+}

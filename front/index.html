@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3978ee">
+<link rel="icon" href="data:,">
+<title>FitTrack | صحتك تبدأ من هنا</title>
+<style>
+:root {
+  --bg: #f5f7fc; --card: #ffffff; --text: #172033; --muted: #8290a5;
+  --primary: #3978ee; --primary2: #245ac2; --green: #16a879; --red: #e45b66;
+  --orange: #f3a53b; --border: #e8edf5; --shadow: 0 4px 18px rgba(25,45,80,.05);
+}
+.dark {
+  --bg: #101827; --card: #1b2739; --text: #f1f5fa; --muted: #a4b0c1;
+  --border: #304057; --shadow: 0 4px 18px #0002;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: Tahoma, Arial, sans-serif; font-size: 14px; line-height: 1.7; transition: .2s; }
+button, input, select { font: inherit; }
+button { cursor: pointer; transition: .2s; }
+header { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 5%; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.logo { font-size: 21px; font-weight: 900; color: var(--primary); }
+.logo span { color: var(--green); }
+.header-actions { display: flex; gap: 7px; }
+.btn { border: 0; border-radius: 9px; padding: 9px 14px; background: var(--primary); color: white; font-weight: bold; font-size: 13px; }
+.btn:hover { background: var(--primary2); }
+.btn.secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+.btn.green { background: var(--green); }
+.container { max-width: 1150px; margin: auto; padding: 20px 16px; }
+nav { display: flex; gap: 7px; overflow-x: auto; padding: 5px 0 15px; scrollbar-width: none; }
+nav::-webkit-scrollbar { display: none; }
+nav button { white-space: nowrap; border: 1px solid var(--border); background: var(--card); color: var(--text); padding: 9px 13px; border-radius: 9px; font-size: 13px; }
+nav button.active { background: var(--primary); color: white; border-color: var(--primary); }
+.page { display: none; }
+.page.active { display: block; }
+h1 { font-size: 23px; margin: 5px 0 8px; font-weight: 800; }
+h2 { font-size: 17px; margin-top: 0; }
+p.sub { color: var(--muted); margin-top: 0; font-size: 13px; }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.grid.two { grid-template-columns: repeat(2, 1fr); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); margin-bottom: 13px; }
+.stat { font-size: 25px; font-weight: 800; margin: 7px 0; }
+.muted { color: var(--muted); font-size: 12px; }
+.progress { height: 7px; background: var(--bg); border-radius: 20px; overflow: hidden; margin: 10px 0; }
+.progress div { height: 100%; background: var(--primary); border-radius: 20px; transition: width .3s; }
+.green-text { color: var(--green); }
+.blue-text { color: var(--primary); }
+label { display: block; font-size: 12px; font-weight: bold; margin: 10px 0 5px; }
+input, select { width: 100%; padding: 11px; border-radius: 9px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; font-size: 14px; }
+input:focus, select:focus { border-color: var(--primary); }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.food-results { max-height: 330px; overflow-y: auto; margin-top: 10px; }
+.food-item { padding: 11px; border: 1px solid var(--border); border-radius: 10px; margin: 7px 0; display: flex; justify-content: space-between; align-items: center; gap: 8px; background: var(--bg); }
+.food-item button { padding: 7px 11px; flex-shrink: 0; }
+.tag { font-size: 10px; color: var(--primary); background: #3978ee18; padding: 3px 7px; border-radius: 20px; display: inline-block; }
+.macro-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; }
+.macro { background: var(--bg); border-radius: 10px; padding: 10px 5px; text-align: center; font-size: 12px; }
+.macro b { display: block; font-size: 17px; margin-top: 5px; }
+.meal-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+.meal-row:last-child { border: 0; }
+.small-btn { border: 0; background: transparent; color: var(--red); font-size: 15px; padding: 5px; }
+.notice { padding: 11px; background: #3978ee12; border-radius: 9px; color: var(--primary); font-size: 12px; line-height: 1.8; }
+.empty { text-align: center; color: var(--muted); padding: 22px; }
+.hidden { display: none !important; }
+.login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+.login-box { background: var(--card); padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--border); box-shadow: var(--shadow); }
+.login-box h2 { color: var(--primary); margin-bottom: 10px; }
+.login-box .message { color: var(--red); margin-top: 10px; min-height: 20px; font-size: 13px; }
+@media(max-width:750px) { .grid { grid-template-columns: repeat(2, minmax(0,1fr)); } .macro-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+</style>
+</head>
+<body>
+
+<div id="loginScreen" class="login-overlay">
+  <div class="login-box">
+    <h2>FitTrack 💪</h2>
+    <p class="sub">ابدأ رحلتك لصحة أفضل</p>
+    <div id="loginForm">
+      <input type="email" id="loginEmail" placeholder="البريد الإلكتروني">
+      <input type="password" id="loginPassword" placeholder="كلمة المرور">
+      <button class="btn" style="width:100%;margin-top:10px" onclick="loginUser()">تسجيل الدخول</button>
+      <button class="btn secondary" style="width:100%;margin-top:10px" onclick="showRegister()">إنشاء حساب جديد</button>
+      <p id="loginMessage" class="message"></p>
+    </div>
+    <div id="registerForm" class="hidden">
+      <input type="text" id="regName" placeholder="الاسم">
+      <input type="tel" id="regPhone" placeholder="رقم الهاتف">
+      <input type="email" id="regEmail" placeholder="البريد الإلكتروني">
+      <input type="password" id="regPassword" placeholder="كلمة المرور">
+      <button class="btn" style="width:100%;margin-top:10px" onclick="registerUser()">إنشاء الحساب</button>
+      <button class="btn secondary" style="width:100%;margin-top:10px" onclick="showLogin()">العودة لتسجيل الدخول</button>
+      <p id="regMessage" class="message"></p>
+    </div>
+    <p class="muted" style="margin-top:15px; font-size:11px;">بياناتك محفوظة على هذا الجهاز فقط.</p>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+<header>
+  <div class="logo">Fit<span>Track</span></div>
+  <div class="header-actions">
+    <button class="btn secondary" onclick="toggleDark()">🌙</button>
+    <button class="btn secondary" onclick="logout()">خروج</button>
+  </div>
+</header>
+
+<div class="container">
+<nav class="no-print">
+  <button class="active" onclick="showPage('home',this)">🏠 الرئيسية</button>
+  <button onclick="showPage('nutrition',this)">🥗 التغذية</button>
+  <button onclick="showPage('progress',this)">📈 التقدم</button>
+  <button onclick="showPage('activity',this)">🏃 النشاط</button>
+  <button onclick="showPage('profile',this)">👤 حسابي</button>
+  <button onclick="showPage('report',this)">📋 التقرير</button>
+</nav>
+
+<section id="home" class="page active">
+  <h1 id="welcome">أهلاً بيك 👋</h1>
+  <p class="sub">تابع صحتك وحقق هدفك كل يوم.</p>
+  <div class="grid">
+    <div class="card">
+      <span class="muted">السعرات المستهلكة</span>
+      <div class="stat blue-text" id="homeCalories">0</div>
+      <span class="muted" id="homeCalGoal">من 2000 سعرة</span>
+      <div class="progress"><div id="calProgress"></div></div>
+    </div>
+    <div class="card">
+      <span class="muted">البروتين</span>
+      <div class="stat green-text" id="homeProtein">0 g</div>
+      <span class="muted" id="proteinGoal">الهدف اليومي</span>
+      <div class="progress"><div id="proteinProgress"></div></div>
+    </div>
+    <div class="card">
+      <span class="muted">المياه</span>
+      <div class="stat blue-text" id="homeWater">0</div>
+      <span class="muted">كوب من هدفك اليومي</span>
+      <div class="progress"><div id="waterProgress"></div></div>
+      <button class="btn green" style="margin-top:10px" onclick="addWater()">+ كوب مياه</button>
+    </div>
+    <div class="card">
+      <span class="muted">الوزن الحالي</span>
+      <div class="stat" id="homeWeight">--</div>
+      <span class="muted">كيلوجرام</span>
+    </div>
+  </div>
+  <div class="card">
+    <h2>ملخص التغذية اليوم</h2>
+    <div class="macro-grid">
+      <div class="macro">السعرات<b id="sumCal">0</b></div>
+      <div class="macro">البروتين<b id="sumPro">0 g</b></div>
+      <div class="macro">الكارب<b id="sumCarb">0 g</b></div>
+      <div class="macro">الدهون<b id="sumFat">0 g</b></div>
+    </div>
+  </div>
+</section>
+
+<section id="nutrition" class="page">
+  <h1>التغذية 🥗</h1>
+  <div class="card">
+    <h2>🔎 ابحث عن أي أكلة</h2>
+    <input id="foodSearch" placeholder="مثال: فراخ، أرز، بطاطس..." oninput="searchFoods()">
+    <div id="foodResults" class="food-results"></div>
+  </div>
+  <div class="card" id="selectedCard">
+    <p class="empty">اختار أكلة من نتائج البحث عشان تحسب قيمتها الغذائية.</p>
+  </div>
+  <div class="card">
+    <h2>وجبات اليوم</h2>
+    <div id="meals"></div>
+  </div>
+</section>
+
+<section id="progress" class="page">
+  <h1>متابعة التقدم 📈</h1>
+  <div class="card">
+    <h2>تسجيل الوزن</h2>
+    <input type="number" id="newWeight" placeholder="وزنك الحالي بالكيلو" step=".1">
+    <button class="btn" style="margin-top:10px" onclick="saveWeight()">حفظ الوزن</button>
+    <div id="weightHistory"></div>
+  </div>
+  <div class="card">
+    <h2>📅 سجل الأيام السابقة</h2>
+    <p class="muted">شوف أكلت قد إيه في كل يوم</p>
+    <div id="historyBox"></div>
+  </div>
+</section>
+
+<section id="activity" class="page">
+  <h1>النشاط اليومي 🏃</h1>
+  <div class="grid two">
+    <div class="card">
+      <h2>🚶 الخطوات</h2>
+      <div class="stat" id="stepsCount">0</div>
+      <input type="number" id="stepsInput" min="0" placeholder="عدد خطواتك اليوم">
+      <button class="btn" style="margin-top:10px" onclick="saveSteps()">حفظ الخطوات</button>
+    </div>
+    <div class="card">
+      <h2>💧 المياه</h2>
+      <div class="stat" id="waterCount">0 كوب</div>
+      <button class="btn green" style="margin-top:10px" onclick="addWater()">+ إضافة كوب</button>
+    </div>
+  </div>
+</section>
+
+<section id="profile" class="page">
+  <h1>حسابي وإعداداتي 👤</h1>
+  <div class="card">
+    <h2>بياناتك الشخصية</h2>
+    <div class="form-grid">
+      <div><label>العمر</label><input id="age" type="number"></div>
+      <div><label>النوع</label><select id="gender"><option value="male">ذكر</option><option value="female">أنثى</option></select></div>
+      <div><label>الوزن</label><input id="weight" type="number" step=".1"></div>
+      <div><label>الطول (سم)</label><input id="height" type="number"></div>
+      <div><label>مستوى النشاط</label>
+        <select id="activityLevel">
+          <option value="1.2">قليل الحركة</option>
+          <option value="1.55">نشاط متوسط</option>
+          <option value="1.9">نشاط شديد</option>
+        </select>
+      </div>
+      <div><label>هدفك</label>
+        <select id="goal">
+          <option value="lose">خسارة الوزن</option>
+          <option value="maintain">تثبيت الوزن</option>
+          <option value="gain">زيادة الوزن</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn" style="margin-top:15px" onclick="calculateGoals()">احسب احتياجي واحفظ</button>
+  </div>
+  <div class="card">
+    <h2>بيانات الحساب</h2>
+    <p id="accountName"></p>
+    <button class="btn secondary" onclick="resetData()">مسح بيانات التطبيق</button>
+  </div>
+</section>
+
+<section id="report" class="page">
+  <h1>التقرير 📋</h1>
+  <div class="card">
+    <h2>تقريرك اليومي</h2>
+    <p id="reportDate"></p>
+    <div id="reportContent"></div>
+  </div>
+</section>
+</div>
+<footer style="text-align:center; color:var(--muted); padding:20px; font-size:11px;">FitTrack © 2026</footer>
+</div>
+
+<script>
+const baseFoods=[
+["فراخ مسلوقة","فراخ",165,31,0,3.6],["فراخ مشوية","فراخ",190,29,0,7],["فراخ محمرة","فراخ",230,28,0,12],["فراخ مقلية","فراخ",260,25,10,14],["صدور فراخ مشوية","فراخ",165,31,0,3.6],["صدور فراخ مسلوقة","فراخ",160,30,0,3.5],["أوراك فراخ مشوية","فراخ",210,26,0,11],["أوراك فراخ بالفرن","فراخ",220,25,0,13],["شاورما فراخ","فراخ",190,22,5,9],["بانيه فراخ","فراخ",270,24,14,13],["فراخ بالصلصة","فراخ",180,25,4,7],["فراخ بالفرن","فراخ",200,28,0,9],["كبدة فراخ","فراخ",167,25,1,7],
+["أرز أبيض مسلوق","أرز",130,2.7,28,0.3],["أرز مصري مطبوخ","أرز",135,2.5,29,0.3],["أرز بسمتي","أرز",121,3,25,0.4],["أرز بالشعرية","أرز",160,3,28,4],["أرز مقلي","أرز",190,4,28,7],["أرز بني","أرز",123,2.7,26,1],
+["بطاطس مسلوقة","بطاطس",87,1.9,20,0.1],["بطاطس مقلية","بطاطس",312,3.4,41,15],["بطاطس مشوية","بطاطس",93,2.5,21,0.1],["بطاطس في الفرن","بطاطس",120,2.5,25,2],["بطاطس بيوريه","بطاطس",110,2,17,4],["بطاطس محمرة","بطاطس",250,3,35,10],
+["بيض مسلوق","بيض",155,13,1.1,11],["بيض مقلي","بيض",196,13,1,15],["بيض أومليت","بيض",154,11,2,11],["بيض عيون","بيض",190,13,1,15],["بيض مخفوق","بيض",150,10,2,11],
+["لحم بقري مشوي","لحمة",250,26,0,15],["لحم بقري مسلوق","لحمة",220,28,0,12],["لحم مفروم مطبوخ","لحمة",250,26,0,17],["كفتة مشوية","كفتة",260,22,3,18],["كباب مشوي","كباب",280,25,1,19],["برجر لحم","برجر",295,17,25,14],
+["سمك مشوي","سمك",130,26,0,3],["سمك مقلي","سمك",220,20,10,12],["تونة مصفاة","تونة",116,26,0,1],["سلمون مشوي","سمك",206,22,0,12],["جمبري مسلوق","جمبري",99,24,0.2,0.3],["جمبري مقلي","جمبري",200,20,10,9],
+["كشري مصري","كشري",165,6,27,3],["ملوخية مطبوخة","ملوخية",55,4,7,1],["محشي كرنب","محشي",150,4,23,5],["محشي ورق عنب","محشي",160,3,25,5],["محشي كوسة","محشي",145,4,22,4],["مسقعة","مسقعة",130,3,10,9],
+["فول مدمس","فول",110,7.6,19.7,0.4],["فول بالزيت","فول",150,7,18,6],["طعمية مقلية","طعمية",330,13,32,18],["حمص مسلوق","حمص",164,9,27,2.6],["عدس مطبوخ","عدس",116,9,20,0.4],["فاصوليا مطبوخة","فاصوليا",125,8,22,0.5],["بامية مطبوخة","بامية",70,2,8,3],["سبانخ مطبوخة","سبانخ",45,3,7,1],
+["شوربة عدس","شوربة",75,4,12,1],["شوربة خضار","شوربة",45,2,8,0.5],
+["سلطة خضراء","سلطة",35,1.5,7,0.3],["سلطة طحينة","طحينة",180,5,8,14],
+["زبادي كامل الدسم","زبادي",61,3.5,4.7,3.3],["زبادي يوناني","زبادي",97,9,3.6,5],["لبن كامل الدسم","لبن",61,3.2,4.8,3.3],["لبن خالي الدسم","لبن",34,3.4,5,0.1],
+["جبنة قريش","جبنة",98,11,3.4,4.3],["جبنة بيضاء","جبنة",260,14,4,21],["جبنة رومي","جبنة",380,25,2,30],["موزاريلا","جبنة",280,28,3,17],["شيدر","جبنة",400,25,1.3,33],
+["عيش بلدي","عيش",270,9,55,2],["خبز أبيض","عيش",265,9,49,3.2],["خبز توست","عيش",266,9,49,3],["عيش سن","عيش",250,10,45,3],
+["مكرونة مسلوقة","مكرونة",158,5.8,31,0.9],["مكرونة بالصلصة","مكرونة",170,5,29,3],["مكرونة بالبشاميل","مكرونة",220,9,20,11],
+["شوفان","شوفان",389,17,66,7],["فشار بدون زيت","فشار",387,13,78,4],
+["تفاح","فاكهة",52,0.3,14,0.2],["موز","فاكهة",89,1.1,23,0.3],["برتقال","فاكهة",47,0.9,12,0.1],["عنب","فاكهة",69,0.7,18,0.2],["فراولة","فاكهة",32,0.7,7.7,0.3],["مانجو","فاكهة",60,0.8,15,0.4],["بطيخ","فاكهة",30,0.6,7.6,0.2],["تمر","فاكهة",282,2.5,75,0.4],["بلح","فاكهة",140,1.5,37,0.2],
+["خيار","خضار",15,0.7,3.6,0.1],["طماطم","خضار",18,0.9,3.9,0.2],["جزر","خضار",41,0.9,10,0.2],["بروكلي","خضار",34,2.8,7,0.4],["كوسة","خضار",17,1.2,3.1,0.3],["خس","خضار",15,1.4,2.9,0.2],["بصل","خضار",40,1.1,9,0.1],
+["لوز","مكسرات",579,21,22,50],["فول سوداني","مكسرات",567,26,16,49],["عين جمل","مكسرات",654,15,14,65],["زبدة فول سوداني","مكسرات",588,25,20,50],
+["عسل أبيض","عسل",304,0.3,82,0],["سكر","سكر",387,0,100,0],
+["شوكولاتة داكنة","شوكولاتة",546,5,61,31],["بسكويت سادة","بسكويت",450,7,70,15],
+["بيتزا جبنة","بيتزا",266,11,33,10],["بيتزا خضار","بيتزا",240,10,30,9],
+["برجر فراخ","برجر",230,16,24,8],
+["ساندوتش شاورما فراخ","شاورما",210,15,22,7],["ساندوتش فول","ساندوتش",230,9,36,5],["ساندوتش طعمية","ساندوتش",280,10,35,10],
+["بطاطس بالجبنة","بطاطس",240,7,30,10],
+["كنافة","حلويات",350,6,48,16],["بسبوسة","حلويات",370,5,55,15],["أم علي","حلويات",220,6,27,10],["مهلبية","حلويات",120,4,19,3],["آيس كريم","حلويات",207,3.5,24,11],["بان كيك","حلويات",227,6,28,10]
+];
+
+let foods=baseFoods.map((f,i)=>({id:i,name:f[0],category:f[1],cal:f[2],pro:f[3],carb:f[4],fat:f[5]}));
+let selectedFood=null;
+let state={};
+let currentUser="";
+
+function loadState(){
+  try{state=JSON.parse(localStorage.getItem("fittrack_"+currentUser))||{};}catch(e){state={};}
+  state.meals ||= []; state.weights ||= []; state.goals ||= {cal:2000,pro:120,carb:220,fat:65,water:8};
+  state.water ||= {}; state.steps ||= {}; state.profile ||= {}; state.manualFoods ||= [];
+}
+function save(){ localStorage.setItem("fittrack_"+currentUser,JSON.stringify(state)); }
+function today(){ return new Date().toLocaleDateString("en-CA"); }
+function todayMeals(){ return state.meals.filter(m=>m.date===today()); }
+function dayWater(){ return state.water[today()]||0; }
+function daySteps(){ return state.steps[today()]||0; }
+
+function showRegister() {
+  document.getElementById('loginForm').classList.add('hidden');
+  document.getElementById('registerForm').classList.remove('hidden');
+}
+function showLogin() {
+  document.getElementById('registerForm').classList.add('hidden');
+  document.getElementById('loginForm').classList.remove('hidden');
+}
+
+function loginUser() {
+  var email = document.getElementById('loginEmail').value.trim();
+  var password = document.getElementById('loginPassword').value;
+  var msg = document.getElementById('loginMessage');
+  if (!email || !password) { msg.textContent = 'يرجى ملء جميع الحقول'; return; }
+  var users = JSON.parse(localStorage.getItem('fittrack_users') || '[]');
+  var user = users.find(u => u.email === email && u.password === password);
+  if (user) {
+    localStorage.setItem('fittrack_current_user', JSON.stringify(user));
+    initializeApp(user.name);
+  } else { msg.textContent = 'البريد الإلكتروني أو كلمة المرور غير صحيحة'; }
+}
+
+function registerUser() {
+  var name = document.getElementById('regName').value.trim();
+  var phone = document.getElementById('regPhone').value.trim();
+  var email = document.getElementById('regEmail').value.trim();
+  var password = document.getElementById('regPassword').value;
+  var msg = document.getElementById('regMessage');
+  if (!name || !phone || !email || !password) { msg.textContent = 'يرجى ملء جميع الحقول'; return; }
+  if (password.length < 6) { msg.textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'; return; }
+  var users = JSON.parse(localStorage.getItem('fittrack_users') || '[]');
+  if (users.some(u => u.email === email)) { msg.textContent = 'هذا البريد الإلكتروني مسجل بالفعل'; return; }
+  var newUser = { name: name, phone: phone, email: email, password: password, createdAt: new Date().toISOString() };
+  users.push(newUser);
+  localStorage.setItem('fittrack_users', JSON.stringify(users));
+  localStorage.setItem('fittrack_current_user', JSON.stringify(newUser));
+  initializeApp(name);
+}
+
+function initializeApp(name) {
+  currentUser = name;
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById("welcome").textContent = "أهلاً يا " + name + " 👋";
+  document.getElementById("accountName").textContent = "اسم الحساب: " + name;
+  loadState(); fillProfile(); refresh();
+}
+
+function logout() {
+  localStorage.removeItem('fittrack_current_user');
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+  currentUser = "";
+}
+
+window.onload = function() {
+  var savedUser = localStorage.getItem('fittrack_current_user');
+  if (savedUser) { var user = JSON.parse(savedUser); initializeApp(user.name); }
+};
+
+function showPage(id,btn){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  if(btn) btn.classList.add("active");
+  refresh();
+}
+function toggleDark(){
+  document.body.classList.toggle("dark");
+  localStorage.setItem("fittrack_dark", document.body.classList.contains("dark"));
+}
+if(localStorage.getItem("fittrack_dark")==="true") document.body.classList.add("dark");
+
+function fillProfile(){
+  let p=state.profile;
+  ["age","gender","weight","height","activityLevel","goal"].forEach(k=>{
+    if(p[k]!==undefined) document.getElementById(k).value=p[k];
+  });
+}
+
+function calculateGoals(){
+  let age=+document.getElementById("age").value, w=+document.getElementById("weight").value, h=+document.getElementById("height").value;
+  let gender=document.getElementById("gender").value, activity=+document.getElementById("activityLevel").value, goal=document.getElementById("goal").value;
+  if(!age||!w||!h){alert("اكمل العمر والوزن والطول");return;}
+  let bmr=10*w+6.25*h-5*age+(gender==="male"?5:-161);
+  let tdee=bmr*activity;
+  let cal=Math.round(tdee+(goal==="lose"?-400:goal==="gain"?300:0));
+  let pro=Math.round(w*(goal==="gain"?2:1.7));
+  let fat=Math.round(w*.8);
+  let carb=Math.max(0,Math.round((cal-pro*4-fat*9)/4));
+  state.profile={age,weight:w,height:h,gender,activityLevel:activity,goal};
+  state.goals={...state.goals,cal,pro,carb,fat};
+  save(); fillProfile(); refresh();
+  alert("تم حساب احتياجك اليومي وحفظ البيانات بنجاح");
+}
+
+function searchFoods(){
+  let q=document.getElementById("foodSearch").value.trim().toLowerCase();
+  let box=document.getElementById("foodResults");
+  if(!q){box.innerHTML='<p class="empty">اكتب اسم أكلة للبحث.</p>';return;}
+  let all=[...foods,...(state.manualFoods||[])];
+  let matches=all.filter(f=>f.name.toLowerCase().includes(q)||f.category.toLowerCase().includes(q));
+  matches=[...new Map(matches.map(f=>[f.name,f])).values()];
+  if(!matches.length){box.innerHTML='<p class="empty">مفيش صنف مطابق.</p>';return;}
+  box.innerHTML=matches.map(f=>`
+    <div class="food-item">
+      <div><strong>${f.name}</strong><span class="tag">${f.category}</span><span class="muted">${f.cal} سعرة / 100جم</span></div>
+      <button class="btn" onclick="chooseFood('${f.name}')">اختيار</button>
+    </div>`).join("");
+}
+
+function chooseFood(name){
+  selectedFood=[...foods,...(state.manualFoods||[])].find(f=>f.name===name);
+  if(!selectedFood)return;
+  document.getElementById("selectedCard").innerHTML=`
+    <h2>الأكلة المختارة: ${selectedFood.name}</h2>
+    <div class="macro-grid" style="margin-top:12px">
+      <div class="macro">السعرات<b>${selectedFood.cal}</b></div>
+      <div class="macro">البروتين<b>${selectedFood.pro}g</b></div>
+      <div class="macro">الكارب<b>${selectedFood.carb}g</b></div>
+      <div class="macro">الدهون<b>${selectedFood.fat}g</b></div>
+    </div>
+    <label>الكمية بالجرام</label>
+    <input type="number" id="foodGrams" value="100" min="1">
+    <label>الوجبة</label>
+    <select id="mealType"><option>الفطار</option><option>الغداء</option><option>العشاء</option><option>سناكس</option></select>
+    <button class="btn green" style="margin-top:12px" onclick="addMeal()">+ إضافة لوجبات اليوم</button>`;
+}
+
+function addMeal(){
+  if(!selectedFood)return;
+  let grams=+document.getElementById("foodGrams").value;
+  if(!grams||grams<=0){alert("اكتب كمية صحيحة");return;}
+  let f=selectedFood, m=grams/100;
+  state.meals.push({
+    date: today(), name:f.name, grams, cal:f.cal*m, pro:f.pro*m, carb:f.carb*m, fat:f.fat*m,
+    type:document.getElementById("mealType").value
+  });
+  save(); refresh(); alert("تمت إضافة الأكلة");
+}
+
+function totals(){
+  return todayMeals().reduce((a,f)=>{a.cal+=f.cal;a.pro+=f.pro;a.carb+=f.carb;a.fat+=f.fat;return a;},{cal:0,pro:0,carb:0,fat:0});
+}
+
+function refresh(){
+  if(!currentUser)return;
+  let t=totals(), g=state.goals, p=state.profile;
+  const put=(id,v)=>{let el=document.getElementById(id); if(el) el.textContent=v;};
+  put("homeCalories",Math.round(t.cal)); put("homeCalGoal","من "+g.cal+" سعرة");
+  put("homeProtein",t.pro.toFixed(1)+" g"); put("proteinGoal","من "+g.pro+" جرام");
+  document.getElementById("calProgress").style.width=Math.min(100,t.cal/(g.cal||1)*100)+"%";
+  document.getElementById("proteinProgress").style.width=Math.min(100,t.pro/(g.pro||1)*100)+"%";
+  document.getElementById("waterProgress").style.width=Math.min(100,dayWater()/(g.water||1)*100)+"%";
+  put("homeWater",dayWater()+" / "+g.water); put("homeWeight",(p.weight||"--")+" kg");
+  put("sumCal",Math.round(t.cal)); put("sumPro",t.pro.toFixed(1)+" g");
+  put("sumCarb",t.carb.toFixed(1)+" g"); put("sumFat",t.fat.toFixed(1)+" g");
+  put("waterCount",dayWater()+" كوب"); put("stepsCount",daySteps());
+  
+  let box=document.getElementById("meals");
+  let list=todayMeals();
+  if(!list.length){box.innerHTML='<p class="empty">لسه مفيش وجبات متسجلة النهارده.</p>';}
+  else{
+    box.innerHTML=list.map((f,i)=>`
+      <div class="meal-row">
+        <div><b>${f.name}</b><div class="muted">${f.type} • ${f.grams} جم • ${Math.round(f.cal)} سعرة</div></div>
+        <button class="small-btn" onclick="removeMeal(${i})">✕</button>
+      </div>`).join("");
+  }
+  renderHistory();
+}
+
+function removeMeal(i){
+  let list=todayMeals();
+  let actualIndex = state.meals.indexOf(list[i]);
+  if(actualIndex > -1) { state.meals.splice(actualIndex, 1); save(); refresh(); }
+}
+
+function addWater(){ state.water[today()]=dayWater()+1; save(); refresh(); }
+function saveSteps(){ 
+  let n=+document.getElementById("stepsInput").value;
+  if(n>=0){state.steps[today()]=n; save(); refresh();}
+}
+function saveWeight(){
+  let w=+document.getElementById("newWeight").value;
+  if(w>0){
+    state.weights.push({date:today(),weight:w});
+    state.profile.weight=w;
+    save(); document.getElementById("newWeight").value=""; refresh();
+  }
+}
+
+function renderHistory() {
+  let box = document.getElementById("historyBox");
+  let dates = [...new Set(state.meals.map(m => m.date))].sort().reverse();
+  if (dates.length === 0) {
+    box.innerHTML = '<p class="empty">لا توجد بيانات مسجلة بعد.</p>';
+    return;
+  }
+  let html = '';
+  dates.forEach(date => {
+    let dayMeals = state.meals.filter(m => m.date === date);
+    let totalCal = dayMeals.reduce((sum, m) => sum + m.cal, 0);
+    let totalPro = dayMeals.reduce((sum, m) => sum + m.pro, 0);
+    let readableDate = new Date(date).toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    let isToday = (date === today());
+    let label = isToday ? "📍 اليوم" : readableDate;
+    html += `
+      <div class="meal-row" style="flex-direction:column; align-items:flex-start; gap:5px;">
+        <div style="display:flex; justify-content:space-between; width:100%;">
+          <b>${label}</b>
+          <b class="blue-text">${Math.round(totalCal)} سعرة</b>
+        </div>
+        <div class="muted" style="font-size:11px;">
+          ${dayMeals.length} وجبة • بروتين: ${totalPro.toFixed(1)}g
+        </div>
+        <div style="width:100%; font-size:12px;">
+          ${dayMeals.map(m=>`<span class="tag" style="margin:2px;">${m.name} (${m.grams}جم)</span>`).join(' ')}
+        </div>
+      </div>`;
+  });
+  box.innerHTML = html;
+}
+
+function resetData(){
+  if(confirm("متأكد إنك عايز تمسح بياناتك كلها؟")){
+    localStorage.removeItem("fittrack_"+currentUser);
+    loadState(); fillProfile(); refresh();
+  }
+}
+document.getElementById("foodResults").innerHTML='<p class="empty">اكتب اسم أكلة للبحث.</p>';
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('Service Worker registered'))
+        .catch(err => console.log('Service Worker failed', err));
+    });
+  }
+</script>
+</body>
+</html>
