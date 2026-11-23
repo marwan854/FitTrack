@@ -8,6 +8,10 @@ const app = express();
 app.use(express.json({ limit: "200mb" }));
 app.use(express.static(__dirname));
 
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
+});
+
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
   
